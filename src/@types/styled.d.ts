@@ -13,7 +13,6 @@ declare module "styled-components" {
       gray_100: string;
       gray_200: string;
       gray_300: string;
-
       overlay: string;
     };
 

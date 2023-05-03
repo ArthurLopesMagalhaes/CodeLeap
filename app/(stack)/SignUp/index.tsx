@@ -1,18 +1,19 @@
-import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../../src/redux/hooks";
+import { setName } from "../../../src/redux/reducers/userReducer";
 
 import { Container, Modal } from "./styles";
+
+import { useNavigation } from "expo-router";
 
 import { Divider } from "../../../src/components/Divider";
 import { Input } from "../../../src/components/Input";
 import { Text } from "../../../src/components/Text";
 import { Button } from "../../../src/components/Button";
 
-import { Link, useNavigation } from "expo-router";
-
 const SignUp = () => {
   const navigation = useNavigation();
-
-  const [name, setName] = useState("aaaaaa");
+  const user = useAppSelector((state) => state.user.name);
+  const dispatch = useAppDispatch();
 
   const handleSignUp = () => {
     navigation.navigate("Home/index");
@@ -28,15 +29,15 @@ const SignUp = () => {
         <Text>Please enter your name</Text>
         <Divider top={8} />
         <Input
-          onChangeText={(txt) => setName(txt)}
+          onChangeText={(txt) => dispatch(setName(txt))}
           placeholder="John Doe"
-          value={name}
+          value={user}
         />
         <Divider top={16} />
         <Button
           label="ENTER"
-          type="primary"
-          disabled={name.trim().length === 0}
+          type={user.length >= 3 ? "primary" : "disable"}
+          disabled={user.trim().length === 0}
           onPress={handleSignUp}
         />
       </Modal>

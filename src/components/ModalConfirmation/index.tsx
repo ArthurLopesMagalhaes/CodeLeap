@@ -1,26 +1,50 @@
 import { useState } from "react";
+import { Alert } from "react-native";
+
+import { ButtonsContainer, Modal, ModalBody, Overlay } from "./styles";
+
 import { Button } from "../Button";
 import { Divider } from "../Divider";
 import { Input } from "../Input";
 import { Text } from "../Text";
-import { ButtonsContainer, Modal, ModalBody, Overlay } from "./styles";
+import { CodeLeapAPI } from "../../actions/codeleap-api";
 
-export type ModalType = "delete" | "edit" | "";
+export type ModalType = "delete" | "edit";
 interface IModal {
   type: ModalType;
   visible: boolean;
   onCancelPress: () => void;
-  onConfirmPress: () => void;
+  postId: number;
 }
 
 export const ModalConfirmation = ({
   type,
   visible,
   onCancelPress,
-  onConfirmPress,
+  postId,
 }: IModal) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
+  const handleDeletePost = async (postId: number) => {
+    console.log(postId);
+    try {
+      const response = await CodeLeapAPI.deletePost(postId);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Something went wrong");
+    }
+  };
+  const handleEditPost = async (postId: number) => {
+    try {
+      const response = await CodeLeapAPI.updatePost(postId, { title, content });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Something went wrong");
+    }
+  };
 
   return (
     <Modal visible={visible} transparent animationType="slide">
@@ -34,7 +58,11 @@ export const ModalConfirmation = ({
               <Divider top={20} />
               <ButtonsContainer>
                 <Button label="Cancel" type="white" onPress={onCancelPress} />
-                <Button label="Delete" type="alert" />
+                <Button
+                  label="Delete"
+                  type="alert"
+                  onPress={() => handleDeletePost(postId)}
+                />
               </ButtonsContainer>
             </>
           ) : (
@@ -62,7 +90,16 @@ export const ModalConfirmation = ({
               <Divider top={12} />
               <ButtonsContainer>
                 <Button label="Cancel" type="white" onPress={onCancelPress} />
-                <Button label="Save" type="confirm" onPress={onConfirmPress} />
+                <Button
+                  label="Save"
+                  type={
+                    title.length >= 3 && content.length >= 3
+                      ? "confirm"
+                      : "disable"
+                  }
+                  disabled={title.length < 3 && content.length < 3}
+                  onPress={() => handleEditPost(postId)}
+                />
               </ButtonsContainer>
             </>
           )}

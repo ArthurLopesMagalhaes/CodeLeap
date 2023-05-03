@@ -1,4 +1,5 @@
 import { TextInputProps } from "react-native";
+
 import { Container, InputField } from "./styles";
 
 interface IInput extends TextInputProps {

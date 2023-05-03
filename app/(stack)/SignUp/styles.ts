@@ -7,6 +7,7 @@ export const Container = styled.View`
   background-color: ${(props) => props.theme.colors.background};
   padding: 40px;
 `;
+
 export const Modal = styled.View`
   width: 100%;
   background-color: ${(props) => props.theme.colors.white};

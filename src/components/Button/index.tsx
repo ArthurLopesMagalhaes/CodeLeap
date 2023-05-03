@@ -1,11 +1,13 @@
+import { TouchableOpacityProps } from "react-native";
+
 import { Container } from "./styles";
 
 import { Text } from "../../components/Text";
-import { PressableProps, TouchableOpacityProps } from "react-native";
 
+export type ButtonTypes = "confirm" | "alert" | "white" | "primary" | "disable";
 export interface IButton extends TouchableOpacityProps {
   label: string;
-  type: "confirm" | "alert" | "white" | "primary" | "disable";
+  type: ButtonTypes;
 }
 
 export const Button = ({ type, label, ...rest }: IButton) => {

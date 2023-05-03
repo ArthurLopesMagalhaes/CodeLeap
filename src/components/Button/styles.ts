@@ -1,7 +1,9 @@
 import styled from "styled-components/native";
 
+import { ButtonTypes } from ".";
+
 interface ContainerProps {
-  background: "confirm" | "alert" | "white" | "primary" | "disable";
+  background: ButtonTypes;
 }
 
 export const Container = styled.TouchableOpacity<ContainerProps>`

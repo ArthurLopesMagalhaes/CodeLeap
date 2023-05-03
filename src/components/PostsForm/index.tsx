@@ -1,11 +1,16 @@
+import { useState } from "react";
+import { Alert } from "react-native";
+
 import { useTheme } from "styled-components";
-import { Text } from "../Text";
+
 import { Container } from "./styles";
+import { CodeLeapAPI } from "../../actions/codeleap-api";
+import { useAppSelector } from "../../redux/hooks";
+
+import { Text } from "../Text";
 import { Divider } from "../Divider";
 import { Input } from "../Input";
 import { Button } from "../Button";
-import { useState } from "react";
-import { CodeLeapAPI } from "../../actions/codeleap-api";
 
 import { AntDesign } from "@expo/vector-icons";
 
@@ -14,14 +19,19 @@ interface PostForm {
 }
 
 export const PostsForm = ({ onClosePress }: PostForm) => {
+  const user = useAppSelector((state) => state.user.name);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
   const { colors } = useTheme();
 
-  const senPost = async () => {
-    const response = CodeLeapAPI.sendPost({ username: "asa", title, content });
-    console.log((await response).data);
+  const sendPost = async () => {
+    try {
+      const response = CodeLeapAPI.sendPost({ username: user, title, content });
+      console.log((await response).data);
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong");
+    }
   };
 
   return (
@@ -51,7 +61,7 @@ export const PostsForm = ({ onClosePress }: PostForm) => {
         textAlignVertical="top"
       />
       <Divider top={12} />
-      <Button label="Create" type="primary" onPress={senPost} />
+      <Button label="Create" type="primary" onPress={sendPost} />
     </Container>
   );
 };

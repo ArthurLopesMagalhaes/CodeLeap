@@ -1,52 +1,63 @@
 import { useEffect, useState } from "react";
-import { FlatList, ActivityIndicator } from "react-native";
+import { FlatList, Alert } from "react-native";
+
 import { FormWrapper, Header, OpenModalButtonContainer } from "./styles";
+import { useTheme } from "styled-components";
+
+import { CodeLeapAPI } from "../../../src/actions/codeleap-api";
+import { PostData } from "../../../src/@types/Posts";
 
 import { Text } from "../../../src/components/Text";
-import { useTheme } from "styled-components";
 import { PostsForm } from "../../../src/components/PostsForm";
 import { Divider } from "../../../src/components/Divider";
 import { PostsCard } from "../../../src/components/PostCard";
+import { Button } from "../../../src/components/Button";
 import {
   ModalConfirmation,
   ModalType,
 } from "../../../src/components/ModalConfirmation";
-import { CodeLeapAPI } from "../../../src/actions/codeleap-api";
-import { postMock } from "../../../src/mocks/postsMock";
-import { PostData } from "../../../src/@types/Posts";
-import { Button } from "../../../src/components/Button";
+
+interface IModalStatus {
+  open: boolean;
+  type: ModalType;
+}
 
 const Home = () => {
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
-  const [modalType, setModalType] = useState<ModalType | "">("");
+  const [modalStatus, setModalStatus] = useState<IModalStatus>({
+    open: false,
+    type: "edit",
+  });
   const [posts, setPosts] = useState<PostData[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
+  const [actualPost, setActualPost] = useState<number>(0);
 
   const { colors } = useTheme();
 
-  const handleDeleteItem = async (postId: number) => {
-    setModalType("delete");
-    console.log(postId);
-    const response = await CodeLeapAPI.deletePost(postId);
-    console.log(response.data);
+  const openDeleteModal = (postId: number) => {
+    setModalStatus({ open: true, type: "delete" });
+    setActualPost(postId);
   };
 
-  const handleEditItem = (postId: number) => {
-    setModalType("edit");
-    console.log(postId);
+  const openEditModal = (postId: number) => {
+    setModalStatus({ open: true, type: "edit" });
+    setActualPost(postId);
+  };
+
+  const getPosts = async () => {
+    try {
+      const response = await CodeLeapAPI.getPosts();
+      setPosts(response.data.results);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Something went wrong");
+    } finally {
+      setLoadingPosts(false);
+    }
   };
 
   useEffect(() => {
-    const getPosts = async () => {
-      try {
-        const response = await CodeLeapAPI.getPosts();
-        setPosts(response.data.results);
-      } catch (error) {
-        console.log(error);
-      }
-    };
     getPosts();
-    setLoadingPosts(false);
   }, []);
 
   return (
@@ -79,20 +90,28 @@ const Home = () => {
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <Divider bottom={12} />}
           contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 12 }}
+          refreshing={loadingPosts}
+          onRefresh={() => getPosts()}
           renderItem={({ item }) => (
             <PostsCard
               data={item}
-              onDeletePress={() => handleDeleteItem(item.id)}
-              onEditPress={() => handleEditItem(item.id)}
+              onDeletePress={() => openDeleteModal(item.id)}
+              onEditPress={() => openEditModal(item.id)}
+              // pullPostId={() => 9}
             />
           )}
         />
       )}
       <ModalConfirmation
-        type={modalType}
-        visible={modalType !== ""}
-        onCancelPress={() => setModalType("")}
-        onConfirmPress={() => null}
+        type={modalStatus.type}
+        visible={modalStatus.open}
+        onCancelPress={() =>
+          setModalStatus({
+            open: false,
+            type: "edit",
+          })
+        }
+        postId={actualPost}
       />
     </>
   );
