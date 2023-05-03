@@ -16,9 +16,10 @@ import { AntDesign } from "@expo/vector-icons";
 
 interface PostForm {
   onClosePress: () => void;
+  closeForm: () => void;
 }
 
-export const PostsForm = ({ onClosePress }: PostForm) => {
+export const PostsForm = ({ onClosePress, closeForm }: PostForm) => {
   const user = useAppSelector((state) => state.user.name);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -29,6 +30,9 @@ export const PostsForm = ({ onClosePress }: PostForm) => {
     try {
       const response = CodeLeapAPI.sendPost({ username: user, title, content });
       console.log((await response).data);
+      setTitle("");
+      setContent("");
+      closeForm();
     } catch (error) {
       Alert.alert("Error", "Something went wrong");
     }
@@ -49,7 +53,11 @@ export const PostsForm = ({ onClosePress }: PostForm) => {
       <Divider top={12} />
       <Text>Title</Text>
       <Divider top={8} />
-      <Input onChangeText={(txt) => setTitle(txt)} placeholder="Hello world" />
+      <Input
+        onChangeText={(txt) => setTitle(txt)}
+        placeholder="Hello world"
+        value={title}
+      />
       <Divider top={24} />
       <Text>Content</Text>
       <Divider top={8} />
@@ -59,9 +67,17 @@ export const PostsForm = ({ onClosePress }: PostForm) => {
         multiline
         numberOfLines={6}
         textAlignVertical="top"
+        value={content}
       />
       <Divider top={12} />
-      <Button label="Create" type="primary" onPress={sendPost} />
+      <Button
+        label="Create"
+        type={
+          title.length === 0 && content.length === 0 ? "disable" : "primary"
+        }
+        onPress={sendPost}
+        disabled={title.length === 0 && content.length === 0}
+      />
     </Container>
   );
 };

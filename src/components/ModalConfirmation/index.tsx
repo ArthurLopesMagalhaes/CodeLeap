@@ -15,6 +15,7 @@ interface IModal {
   visible: boolean;
   onCancelPress: () => void;
   postId: number;
+  refetchPosts: () => void;
 }
 
 export const ModalConfirmation = ({
@@ -22,6 +23,7 @@ export const ModalConfirmation = ({
   visible,
   onCancelPress,
   postId,
+  refetchPosts,
 }: IModal) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -31,15 +33,18 @@ export const ModalConfirmation = ({
     try {
       const response = await CodeLeapAPI.deletePost(postId);
       console.log(response.data);
+      refetchPosts();
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");
     }
   };
+
   const handleEditPost = async (postId: number) => {
     try {
       const response = await CodeLeapAPI.updatePost(postId, { title, content });
       console.log(response.data);
+      refetchPosts();
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");
@@ -93,7 +98,7 @@ export const ModalConfirmation = ({
                 <Button
                   label="Save"
                   type={
-                    title.length >= 3 && content.length >= 3
+                    title.length > 0 && content.length >= 0
                       ? "confirm"
                       : "disable"
                   }

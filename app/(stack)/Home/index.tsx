@@ -44,6 +44,11 @@ const Home = () => {
     setActualPost(postId);
   };
 
+  const closeFormAndRefetch = () => {
+    setOpenCreatePostModal(false);
+    getPosts();
+  };
+
   const getPosts = async () => {
     try {
       const response = await CodeLeapAPI.getPosts();
@@ -69,7 +74,10 @@ const Home = () => {
       </Header>
       {openCreatePostModal ? (
         <FormWrapper>
-          <PostsForm onClosePress={() => setOpenCreatePostModal(false)} />
+          <PostsForm
+            onClosePress={() => setOpenCreatePostModal(false)}
+            closeForm={closeFormAndRefetch}
+          />
           <Divider top={12} />
         </FormWrapper>
       ) : (
@@ -97,7 +105,6 @@ const Home = () => {
               data={item}
               onDeletePress={() => openDeleteModal(item.id)}
               onEditPress={() => openEditModal(item.id)}
-              // pullPostId={() => 9}
             />
           )}
         />
@@ -105,6 +112,7 @@ const Home = () => {
       <ModalConfirmation
         type={modalStatus.type}
         visible={modalStatus.open}
+        refetchPosts={getPosts}
         onCancelPress={() =>
           setModalStatus({
             open: false,
