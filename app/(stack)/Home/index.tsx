@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, Alert } from "react-native";
+import { FlatList, Alert, ActivityIndicator } from "react-native";
 
 import { FormWrapper, Header, OpenModalButtonContainer } from "./styles";
 import { useTheme } from "styled-components";
@@ -16,13 +16,20 @@ import {
   ModalConfirmation,
   ModalType,
 } from "../../../src/components/ModalConfirmation";
-
+import Animated, {
+  FadeIn,
+  FadeOut,
+  Layout,
+  SlideInLeft,
+} from "react-native-reanimated";
+import axios from "axios";
 interface IModalStatus {
   open: boolean;
   type: ModalType;
 }
 
 const Home = () => {
+  const theme = useTheme();
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
   const [modalStatus, setModalStatus] = useState<IModalStatus>({
     open: false,
@@ -51,8 +58,9 @@ const Home = () => {
 
   const getPosts = async () => {
     try {
-      const response = await CodeLeapAPI.getPosts();
-      setPosts(response.data.results);
+      setLoadingPosts(true);
+      const { data } = await CodeLeapAPI.getPosts();
+      setPosts(data.results);
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");
@@ -73,39 +81,47 @@ const Home = () => {
         </Text>
       </Header>
       {openCreatePostModal ? (
-        <FormWrapper>
-          <PostsForm
-            onClosePress={() => setOpenCreatePostModal(false)}
-            closeForm={closeFormAndRefetch}
-          />
-          <Divider top={12} />
-        </FormWrapper>
+        <Animated.View layout={Layout.springify()}>
+          <FormWrapper>
+            <PostsForm
+              onClosePress={() => setOpenCreatePostModal(false)}
+              closeForm={closeFormAndRefetch}
+            />
+            <Divider top={12} />
+          </FormWrapper>
+        </Animated.View>
       ) : (
-        <OpenModalButtonContainer>
-          <Text weight="700" size={18}>
-            Any idea? Create a post!
-          </Text>
-          <Button
-            label="+"
-            type="primary"
-            onPress={() => setOpenCreatePostModal(true)}
-          />
-        </OpenModalButtonContainer>
+        <Animated.View entering={FadeIn.delay(500)} exiting={FadeOut}>
+          <OpenModalButtonContainer>
+            <Text weight="700" size={18}>
+              Any idea? Create a post!
+            </Text>
+            <Button
+              label="+"
+              type="primary"
+              onPress={() => setOpenCreatePostModal(true)}
+            />
+          </OpenModalButtonContainer>
+        </Animated.View>
       )}
       {!loadingPosts && posts?.length > 0 && (
-        <FlatList
+        <Animated.FlatList
+          layout={Layout.springify()}
           data={posts}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <Divider bottom={12} />}
+          initialNumToRender={10}
           contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 12 }}
           refreshing={loadingPosts}
           onRefresh={() => getPosts()}
-          renderItem={({ item }) => (
-            <PostsCard
-              data={item}
-              onDeletePress={() => openDeleteModal(item.id)}
-              onEditPress={() => openEditModal(item.id)}
-            />
+          renderItem={({ item, index }) => (
+            <Animated.View entering={SlideInLeft.delay(100 * index)}>
+              <PostsCard
+                data={item}
+                onDeletePress={() => openDeleteModal(item.id)}
+                onEditPress={() => openEditModal(item.id)}
+              />
+            </Animated.View>
           )}
         />
       )}

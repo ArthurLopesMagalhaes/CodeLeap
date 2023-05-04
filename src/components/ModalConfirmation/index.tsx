@@ -7,6 +7,7 @@ import { Button } from "../Button";
 import { Divider } from "../Divider";
 import { Input } from "../Input";
 import { Text } from "../Text";
+
 import { CodeLeapAPI } from "../../actions/codeleap-api";
 
 export type ModalType = "delete" | "edit";
@@ -34,6 +35,7 @@ export const ModalConfirmation = ({
       const response = await CodeLeapAPI.deletePost(postId);
       console.log(response.data);
       refetchPosts();
+      onCancelPress();
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");
@@ -45,6 +47,7 @@ export const ModalConfirmation = ({
       const response = await CodeLeapAPI.updatePost(postId, { title, content });
       console.log(response.data);
       refetchPosts();
+      onCancelPress();
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");

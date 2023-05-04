@@ -1,4 +1,6 @@
+import { StyleSheet } from "react-native";
 import styled from "styled-components/native";
+import { theme } from "../../global/theme";
 
 export const Container = styled.View`
   border: 1px solid ${(props) => props.theme.colors.gray_200};

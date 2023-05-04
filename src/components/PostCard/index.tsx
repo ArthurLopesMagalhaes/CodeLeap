@@ -1,5 +1,6 @@
 import { useTheme } from "styled-components";
-import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
+import { formatDistanceToNowStrict } from "date-fns";
+import Animated, { BounceInLeft } from "react-native-reanimated";
 
 import { AuthorAndTime, Container, Content, Header, Icons } from "./styles";
 
