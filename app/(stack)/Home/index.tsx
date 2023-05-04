@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, Alert, ActivityIndicator } from "react-native";
+import { Alert } from "react-native";
 
 import { FormWrapper, Header, OpenModalButtonContainer } from "./styles";
 import { useTheme } from "styled-components";
@@ -16,12 +16,7 @@ import {
   ModalConfirmation,
   ModalType,
 } from "../../../src/components/ModalConfirmation";
-import Animated, {
-  FadeIn,
-  FadeOut,
-  Layout,
-  SlideInLeft,
-} from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import axios from "axios";
 interface IModalStatus {
   open: boolean;
@@ -61,6 +56,7 @@ const Home = () => {
       setLoadingPosts(true);
       const { data } = await CodeLeapAPI.getPosts();
       setPosts(data.results);
+      console.log(posts);
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");
@@ -110,18 +106,15 @@ const Home = () => {
           data={posts}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <Divider bottom={12} />}
-          initialNumToRender={10}
           contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 12 }}
           refreshing={loadingPosts}
           onRefresh={() => getPosts()}
-          renderItem={({ item, index }) => (
-            <Animated.View entering={SlideInLeft.delay(100 * index)}>
-              <PostsCard
-                data={item}
-                onDeletePress={() => openDeleteModal(item.id)}
-                onEditPress={() => openEditModal(item.id)}
-              />
-            </Animated.View>
+          renderItem={({ item }) => (
+            <PostsCard
+              data={item}
+              onDeletePress={() => openDeleteModal(item.id)}
+              onEditPress={() => openEditModal(item.id)}
+            />
           )}
         />
       )}

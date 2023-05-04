@@ -20,3 +20,15 @@ export const OpenModalButtonContainer = styled.View`
   justify-content: space-between;
   padding: 12px;
 `;
+
+export const ButtonsBox = styled.View`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+export const CurrentPage = styled.Text`
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+`;
