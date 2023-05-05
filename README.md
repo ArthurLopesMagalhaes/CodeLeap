@@ -28,6 +28,7 @@ CodeLeap - (CodeTest) is a mobile app developed using Expo. This app was created
   <img src="github/Screenshot_5.png" alt="Screenshot 1" width="300"/>
   <img src="github/Screenshot_6.png" alt="Screenshot 1" width="300"/>
 </div>
+
 ## 🌟 Getting Started
 
 To get started with this project, you will need to have Expo installed on your local machine. You can download Expo from the official website or install it using npm:
