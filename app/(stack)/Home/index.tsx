@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
-import { FlatList, Alert, ActivityIndicator } from "react-native";
+import { Alert } from "react-native";
 
-import { FormWrapper, Header, OpenModalButtonContainer } from "./styles";
+import {
+  ButtonsBox,
+  FormWrapper,
+  Header,
+  OpenModalButtonContainer,
+} from "./styles";
 import { useTheme } from "styled-components";
 
 import { CodeLeapAPI } from "../../../src/actions/codeleap-api";
@@ -22,7 +27,7 @@ import Animated, {
   Layout,
   SlideInLeft,
 } from "react-native-reanimated";
-import axios from "axios";
+
 interface IModalStatus {
   open: boolean;
   type: ModalType;
@@ -30,14 +35,19 @@ interface IModalStatus {
 
 const Home = () => {
   const theme = useTheme();
+
+  const [posts, setPosts] = useState<PostData[]>([]);
   const [openCreatePostModal, setOpenCreatePostModal] = useState(false);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const [actualPost, setActualPost] = useState<number>(0);
   const [modalStatus, setModalStatus] = useState<IModalStatus>({
     open: false,
     type: "edit",
   });
-  const [posts, setPosts] = useState<PostData[]>([]);
-  const [loadingPosts, setLoadingPosts] = useState(true);
-  const [actualPost, setActualPost] = useState<number>(0);
+  const [page, setPage] = useState({
+    next: "",
+    previous: "",
+  });
 
   const { colors } = useTheme();
 
@@ -56,11 +66,12 @@ const Home = () => {
     getPosts();
   };
 
-  const getPosts = async () => {
+  const getPosts = async (page?: string) => {
     try {
       setLoadingPosts(true);
-      const { data } = await CodeLeapAPI.getPosts();
+      const { data } = await CodeLeapAPI.getPosts(page ? page : "");
       setPosts(data.results);
+      setPage({ next: data.next, previous: data.previous });
     } catch (error) {
       console.log(error);
       Alert.alert("Error", "Something went wrong");
@@ -112,6 +123,25 @@ const Home = () => {
           ItemSeparatorComponent={() => <Divider bottom={12} />}
           initialNumToRender={10}
           contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 12 }}
+          ListFooterComponent={
+            <>
+              <Divider top={12} />
+              <ButtonsBox>
+                <Button
+                  label="<"
+                  type={page.previous ? "primary" : "disable"}
+                  disabled={!page.previous}
+                  onPress={() => getPosts(page.previous)}
+                />
+                <Button
+                  label=">"
+                  type={page.next ? "primary" : "disable"}
+                  disabled={!page.next}
+                  onPress={() => getPosts(page.next)}
+                />
+              </ButtonsBox>
+            </>
+          }
           refreshing={loadingPosts}
           onRefresh={() => getPosts()}
           renderItem={({ item, index }) => (

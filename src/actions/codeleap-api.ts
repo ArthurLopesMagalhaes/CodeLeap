@@ -2,8 +2,8 @@ import { PostsResponse, SendPost, UpdatePost } from "../@types/Posts";
 import { api } from "./axios";
 
 export const CodeLeapAPI = {
-  getPosts: () => {
-    return api.get<PostsResponse>("?limit=20");
+  getPosts: (query: string) => {
+    return api.get<PostsResponse>(query);
   },
   sendPost: (data: SendPost) => {
     return api.post("", data);
