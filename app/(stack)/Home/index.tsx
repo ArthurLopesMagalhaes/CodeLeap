@@ -73,7 +73,6 @@ const Home = () => {
       setPosts(data.results);
       setPage({ next: data.next, previous: data.previous });
     } catch (error) {
-      console.log(error);
       Alert.alert("Error", "Something went wrong");
     } finally {
       setLoadingPosts(false);

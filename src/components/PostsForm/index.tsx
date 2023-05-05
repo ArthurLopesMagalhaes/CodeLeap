@@ -38,7 +38,6 @@ export const PostsForm = ({ onClosePress, closeForm }: PostForm) => {
   const sendPost = async () => {
     try {
       const response = CodeLeapAPI.sendPost({ username: user, title, content });
-      console.log((await response).data);
       setTitle("");
       setContent("");
       closeForm();

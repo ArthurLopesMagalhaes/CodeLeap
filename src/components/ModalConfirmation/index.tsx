@@ -30,14 +30,12 @@ export const ModalConfirmation = ({
   const [content, setContent] = useState("");
 
   const handleDeletePost = async (postId: number) => {
-    console.log(postId);
     try {
       const response = await CodeLeapAPI.deletePost(postId);
-      console.log(response.data);
+
       refetchPosts();
       onCancelPress();
     } catch (error) {
-      console.log(error);
       Alert.alert("Error", "Something went wrong");
     }
   };
@@ -45,11 +43,10 @@ export const ModalConfirmation = ({
   const handleEditPost = async (postId: number) => {
     try {
       const response = await CodeLeapAPI.updatePost(postId, { title, content });
-      console.log(response.data);
+
       refetchPosts();
       onCancelPress();
     } catch (error) {
-      console.log(error);
       Alert.alert("Error", "Something went wrong");
     }
   };
