@@ -121,7 +121,6 @@ const Home = () => {
           data={posts}
           keyExtractor={(item) => item.id.toString()}
           ItemSeparatorComponent={() => <Divider bottom={12} />}
-          initialNumToRender={10}
           contentContainerStyle={{ paddingBottom: 60, paddingHorizontal: 12 }}
           ListFooterComponent={
             <>
