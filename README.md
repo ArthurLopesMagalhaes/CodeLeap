@@ -2,6 +2,8 @@
 
 CodeLeap - (CodeTest) is a mobile app developed using Expo. This app was created as part of a code test for [CodeLeap](https://codeleap.co.uk).
 
+The project is Live on Expo: [App](https://expo.dev/@xarthurlm/CodeLeap-Test?serviceType=classic&distribution=expo-go)
+
 ## 🚀 Features
 
 - CRUD operations.
