@@ -21,11 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.xarthurlm.CodeLeapTest"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "myapp"
+    "scheme": "myapp",
+    "extra": {
+      "eas": {
+        "projectId": "e78a3749-afdf-417c-9d25-74671956fcd2"
+      }
+    }
   }
 }
